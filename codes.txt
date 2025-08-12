@@ -1,0 +1,4 @@
+SECRET_KEY: 885feb0a41020c7ba48bc0df15f668af
+REACT_APP_API_URL: https://attendance-portal-dib6.onrender.com
+INITIAL_HR_CREATION_KEY: f64ef046cefa742068bbbff6986ffc1b
+Password: Paypanda@123
