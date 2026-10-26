@@ -1,476 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for Icons - UPDATED TO STABLE VERSION -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" xintegrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        /* CSS Variables for Theme */
-        :root {
-            --bg-primary: #000000;
-            --bg-secondary: #080808;
-            --text-primary: #e0e0e0;
-            --accent-color: #000080; /* Navy Blue */
-            --accent-color-light: #0000A0; /* Lighter Navy Blue */
-            --shadow-color: rgba(0, 0, 0, 0.5);
-            --gradient-from: #000060;
-            --gradient-via: #000080;
-            --gradient-to: #0000A0;
-        }
-
-        /* Light Mode Variables */
-        body.light-mode {
-            --bg-primary: #f0f2f5;
-            --bg-secondary: #ffffff;
-            --text-primary: #333333;
-            --accent-color: #000080; /* Keep accent for consistency */
-            --accent-color-light: #0000A0;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --gradient-from: #a7c0ff; /* Lighter blue for light mode hero */
-            --gradient-via: #809fff;
-            --gradient-to: #6080ff;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            color: var(--text-primary);
-            background-color: var(--bg-primary);
-            perspective: 1000px; /* Needed for 3D transforms on children */
-            overflow-x: hidden; /* Prevent horizontal scroll from animations */
-            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
-            scroll-behavior: smooth; /* Smooth scrolling for anchor links */
-        }
-
-        /* Custom scrollbar for better aesthetics */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-color-light); }
-
-        /* Keyframe for subtle hero background animation */
-        @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        #hero {
-            background-size: 200% 200%;
-            animation: gradient-shift 10s ease infinite;
-            background-image: linear-gradient(to right, var(--gradient-from), var(--gradient-via), var(--gradient-to));
-            /* Added for parallax effect */
-            background-attachment: fixed;
-            position: relative;
-        }
-
-        /* Typing effect for hero subtitle */
-        .typing-text-container {
-            display: inline-block;
-            overflow: hidden;
-            border-right: 2px solid var(--accent-color);
-            white-space: nowrap;
-            margin: 0 auto;
-            max-width: 100%;
-            text-align: center;
-        }
-        .typing-text-content { display: inline-block; white-space: nowrap; }
-        @keyframes typing {
-            from { width: 0 }
-            to { width: var(--typing-width); }
-        }
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: var(--accent-color); }
-        }
-
-        /* Initial state for scroll-reveal animations */
-        .reveal-item { opacity: 0; transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
-        .reveal-item.reveal-up { transform: translateY(20px); }
-        .reveal-item.reveal-left { transform: translateX(-20px); }
-        .reveal-item.reveal-right { transform: translateX(20px); }
-        .reveal-item.reveal-scale { transform: scale(0.95); }
-        .reveal-item.is-visible { opacity: 1; transform: translateY(0) translateX(0) scale(1); }
-        .grid-reveal-container .reveal-item { transition-delay: var(--delay); }
-
-        /* New keyframe for subtle button glow */
-        @keyframes subtle-glow {
-            0%, 100% { box-shadow: 0 2px 4px var(--shadow-color); }
-            50% { box-shadow: 0 4px 12px rgba(0, 0, 128, 0.5); }
-        }
-        .hero-button:hover { animation: subtle-glow 1.5s ease-in-out infinite; }
-
-        /* Nav link fade-in on load */
-        .nav-link-fade-in { opacity: 0; animation: fadeIn 0.5s ease-out forwards; }
-        @keyframes fadeIn { to { opacity: 1; } }
-
-        /* --- New Hero Effects START --- */
-        /* Mouse-move interactive effect */
-        .hero-content-interactive {
-            transition: transform 0.2s ease-out;
-            transform: translate(calc(var(--x, 0) * 1px), calc(var(--y, 0) * 1px));
-        }
-
-        /* Enhanced image glow */
-        @keyframes pulse-glow {
-            0% {
-                box-shadow: 0 0 15px 5px rgba(0, 0, 128, 0.4), 0 0 0 0 rgba(0, 0, 128, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 25px 10px rgba(0, 0, 128, 0.1), 0 0 0 10px rgba(0, 0, 128, 0.1);
-            }
-            100% {
-                box-shadow: 0 0 15px 5px rgba(0, 0, 128, 0.4), 0 0 0 0 rgba(0, 0, 128, 0.4);
-            }
-        }
-        .hero-image-glow {
-            animation: pulse-glow 4s infinite ease-in-out;
-        }
-        /* --- New Hero Effects END --- */
-
-        /* Skill Card Flip Effect */
-        .skill-card { position: relative; height: 200px; transform-style: preserve-3d; transition: transform 0.6s ease-in-out; cursor: pointer; }
-        .skill-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transform-style: preserve-3d; transition: transform 0.6s; }
-        .skill-card:hover .skill-card-inner { transform: rotateY(180deg); }
-        .skill-card-front, .skill-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; border-radius: 0.75rem; background-color: var(--bg-secondary); box-shadow: 0 2px 8px var(--shadow-color); }
-        .skill-card-back { transform: rotateY(180deg); color: var(--text-primary); font-size: 0.9rem; text-align: left; overflow: auto; }
-        .skill-card-back h4 { font-weight: 600; margin-bottom: 0.75rem; color: var(--accent-color); text-align: center; }
-        .skill-card-back ul { list-style: none; padding-left: 0; margin: 0; width: 100%; }
-        .skill-card-back ul li { position: relative; margin-bottom: 0.4rem; padding-left: 1.2rem; font-weight: 300; }
-        .skill-card-back ul li::before { content: '•'; color: var(--accent-color); position: absolute; left: 0; top: 0; font-size: 1.2em; line-height: 1; }
-
-        /* Project Card Styling */
-        .project-card { background-color: var(--bg-secondary); border-radius: 0.75rem; box-shadow: 0 4px 15px var(--shadow-color); transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out, border-color 0.4s ease-in-out; overflow: hidden; display: flex; flex-direction: column; border: 2px solid transparent; position: relative; }
-        .project-card:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 18px 35px var(--shadow-color); border-color: var(--accent-color); }
-        .project-card .project-image { width: 100%; height: 220px; object-fit: cover; border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem; transition: transform 0.4s ease-in-out; }
-        .project-card:hover .project-image { transform: scale(1.1); filter: brightness(0.6); }
-        .project-image-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 220px; background: rgba(0, 0, 128, 0.6); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.4s ease-in-out; border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem; pointer-events: none; }
-        .project-card:hover .project-image-overlay { opacity: 1; pointer-events: auto; }
-        .project-image-overlay p { color: white; font-size: 1.1rem; font-weight: 500; margin-bottom: 1rem; text-align: center; padding: 0 1rem; }
-        .project-card .project-content { padding: 1.75rem; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .project-card .project-links { margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; }
-
-        /* Nav Link Underline Effect */
-        .nav-link-underline { position: relative; }
-        .nav-link-underline::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -3px; left: 0; background-color: var(--accent-color); transition: width 0.3s ease-out; }
-        .nav-link-underline:hover::after { width: 100%; }
-
-        /* Contact Button Press Effect */
-        .contact-button { transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; }
-        .contact-button:active { transform: translateY(2px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
-
-        /* Message Box styles */
-        .message-box { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: var(--bg-secondary); color: var(--text-primary); padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px var(--shadow-color); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-width: 250px; animation: fadeInScale 0.3s ease-out forwards; }
-        .message-box.show { display: flex; }
-        .message-box button { background-color: var(--accent-color); color: white; padding: 8px 15px; border: none; border-radius: 5px; margin-top: 15px; transition: background-color 0.2s ease; cursor: pointer; }
-        .message-box button:hover { background-color: var(--accent-color-light); }
-        @keyframes fadeInScale { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-
-        /* Back to Top Button */
-        #backToTopBtn { position: fixed; bottom: 2rem; right: 2rem; background-color: var(--accent-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem; display: none; justify-content: center; align-items: center; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease; opacity: 0; z-index: 999; cursor: pointer; }
-        #backToTopBtn.show { opacity: 1; display: flex; }
-        #backToTopBtn:hover { background-color: var(--accent-color-light); transform: translateY(-3px); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shashwat Kulshrestha — Full-stack Developer</title>
+<meta name="description" content="Shashwat Kulshrestha — full-stack developer, website and app enthusiast, traveller. Software Engineer building web software and AI features.">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{--bg:#e5e3dc;--ink:#141414;--mut:#6e6b63;--acc:#e14d2a;--line:rgba(20,20,20,.22)}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.6 'Space Mono',monospace;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,.big{font-family:'Dela Gothic One',sans-serif;font-weight:400;line-height:1}
+::selection{background:var(--acc);color:#fff}
+.wrap{max-width:1180px;margin:auto;padding:0 5vw}
+.lbl{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;padding:calc(16px + env(safe-area-inset-top,0px)) 5vw 16px;mix-blend-mode:difference;color:#e5e3dc;font-size:13px}
+nav a{margin-left:22px}nav a:hover{color:var(--acc)}
+/* hero */
+#hero{position:relative;min-height:100svh;display:grid;align-items:end;padding:110px 0 50px;overflow:hidden}
+#gl{position:absolute;right:-6vw;top:8vh;width:min(62vw,720px);height:min(62vw,720px);pointer-events:none;opacity:.9}
+.hero-in{position:relative;display:grid;grid-template-columns:1fr auto;gap:30px;align-items:end}
+#hero h1{font-size:clamp(2.6rem,10.5vw,9rem);letter-spacing:-.02em;margin:14px 0 22px}
+#hero h1 span{color:var(--acc)}
+.role{font-size:clamp(14px,1.6vw,18px);max-width:560px}
+.portrait{width:clamp(120px,17vw,210px);aspect-ratio:3/4;border:1px solid var(--ink);background:var(--acc) center/cover;position:relative;overflow:hidden}
+.portrait img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1) contrast(1.05);transition:filter .4s}
+.portrait:hover img{filter:none}
+.portrait b{position:absolute;inset:0;display:grid;place-items:center;font:400 3rem 'Dela Gothic One';color:#fff;z-index:-1}
+.cta{display:inline-block;margin-top:26px;padding:14px 22px;background:var(--ink);color:var(--bg);font-weight:700;transition:.2s}
+.cta:hover{background:var(--acc)}
+.scroll{position:absolute;left:5vw;bottom:14px;font-size:11px;color:var(--mut)}
+/* work */
+section{padding:110px 0 20px}
+h2{font-size:clamp(2rem,5.5vw,4.2rem);margin:12px 0 40px}
+.head,.row{display:grid;grid-template-columns:70px 1fr 220px 40px;gap:14px;padding:20px 0;border-top:1px solid var(--line);align-items:baseline}
+.head{padding:8px 0;border-top:0}
+.row{cursor:pointer;transition:.25s}
+.row .n{color:var(--mut)}.row .t{font:400 clamp(1.3rem,3.2vw,2.3rem)/1.1 'Dela Gothic One'}
+.row .d{display:none;grid-column:2/4;font-size:13px;color:var(--mut)}
+.row:hover{background:var(--ink);color:var(--bg);padding-left:16px;padding-right:16px}.row:hover .n{color:var(--acc)}
+.row .ar{text-align:right;transition:.25s}.row:hover .ar{transform:translate(4px,-4px);color:var(--acc)}
+#list{border-bottom:1px solid var(--line)}
+#pv{position:fixed;left:0;top:0;z-index:30;width:320px;background:var(--acc);color:#fff;padding:18px;pointer-events:none;opacity:0;transition:opacity .2s;border:1px solid var(--ink)}
+#pv.on{opacity:1}#pv h3{font-size:1.3rem;margin-bottom:10px}#pv p{font-size:12.5px;line-height:1.5}#pv .s{margin-top:12px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.arch-btn{margin-top:22px;font:inherit;background:none;border:1px dashed var(--ink);padding:10px 16px;cursor:pointer}.arch-btn:hover{background:var(--ink);color:var(--bg)}
+#archive{display:none;margin-top:30px;border:1px solid var(--ink);padding:26px}
+#archive.on{display:block}#archive h3{font-size:1.8rem;margin:8px 0 6px}
+.ag{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:22px}
+.ag div{border:1px solid var(--line);padding:16px}.ag b{font-family:'Dela Gothic One';font-weight:400;font-size:1.05rem;display:block;margin:6px 0}
+/* record */
+.rec{display:grid;grid-template-columns:1fr 1.4fr;gap:6vw}
+.stat{font-size:clamp(3rem,9vw,7rem)}.stat small{font:400 14px 'Space Mono';color:var(--mut)}
+.arsenal div{padding:14px 0;border-top:1px solid var(--line)}.arsenal b{color:var(--acc)}
+.chron h3{font-size:1.3rem;margin-top:34px}.chron .it{padding:22px 0;border-top:1px solid var(--line)}
+.chron .it:last-child{border-bottom:1px solid var(--line)}.chron h4{font:400 1.25rem 'Dela Gothic One';margin:4px 0 8px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:18px}
+.cards a,.cards div{border:1px solid var(--ink);padding:20px;transition:.2s}.cards a:hover{background:var(--acc);color:#fff}
+.cards b{font:400 1.05rem 'Dela Gothic One';display:block;margin:8px 0}
+/* about/traveller */
+.trip{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0;border:1px solid var(--ink)}
+.trip div{padding:28px;border-right:1px solid var(--ink)}.trip div:last-child{border:0}
+.trip h3{font-size:1.6rem;margin:10px 0 12px}
+/* marquee */
+.mq{margin-top:110px;background:var(--ink);color:var(--bg);overflow:hidden;white-space:nowrap;padding:18px 0}
+.mq div{display:inline-block;animation:mq 28s linear infinite;font:400 clamp(1.4rem,4vw,3rem) 'Dela Gothic One'}
+.mq span{color:var(--acc);margin:0 .6em}@keyframes mq{to{transform:translateX(-50%)}}
+/* contact */
+#contact h2 span{color:var(--acc)}
+.mail{display:block;font:400 clamp(1.3rem,5.4vw,4.4rem) 'Dela Gothic One';margin:10px 0 40px;word-break:break-all;border-bottom:3px solid var(--ink);padding-bottom:12px;transition:.2s}
+.mail:hover{color:var(--acc);border-color:var(--acc)}
+.ch{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0 40px}.ch a{border:1px solid var(--ink);padding:10px 18px}.ch a:hover{background:var(--ink);color:var(--bg)}
+footer{padding:30px 0 calc(40px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--mut);border-top:1px solid var(--line);margin-top:60px}
+.rv{opacity:0;transform:translateY(24px);transition:.7s}.rv.on{opacity:1;transform:none}
+@media(max-width:800px){
+ .hero-in{grid-template-columns:1fr}.portrait{order:-1;width:130px}
+ .head{display:none}.row{grid-template-columns:40px 1fr 30px}.row .c{display:none}.row .d{display:block;grid-column:2/3}.row:hover{background:none;color:inherit;padding-left:0;padding-right:0}
+ #pv{display:none}.rec{grid-template-columns:1fr}.trip div{border-right:0;border-bottom:1px solid var(--ink)}
+ nav a:not(:last-child){display:none}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.mq div{animation:none}.rv{transition:none}}
+</style>
 </head>
-<body class="antialiased">
-    
-    <!-- Header/Navigation Bar -->
-    <header class="bg-[var(--bg-primary)] bg-opacity-80 backdrop-blur-sm shadow-none py-4 px-6 fixed w-full z-10 top-0 rounded-b-lg">
-        <nav class="container mx-auto flex justify-between items-center">
-            <a href="#hero" class="text-2xl font-bold text-[var(--text-primary)] nav-link-fade-in hover:text-[var(--accent-color)] transition duration-300 rounded-md" style="animation-delay: 0.2s;">Shashwat Kulshrestha</a>
-            <div class="space-x-6 flex items-center">
-                <a href="#about" class="text-[var(--text-primary)] nav-link-fade-in nav-link-underline hover:text-[var(--accent-color)] transition duration-300 rounded-md" style="animation-delay: 0.3s;">About</a>
-                <a href="#skills" class="text-[var(--text-primary)] nav-link-fade-in nav-link-underline hover:text-[var(--accent-color)] transition duration-300 rounded-md" style="animation-delay: 0.4s;">Skills</a>
-                <a href="#projects" class="text-[var(--text-primary)] nav-link-fade-in nav-link-underline hover:text-[var(--accent-color)] transition duration-300 rounded-md" style="animation-delay: 0.5s;">Projects</a>
-                <a href="#contact" class="text-[var(--text-primary)] nav-link-fade-in nav-link-underline hover:text-[var(--accent-color)] transition duration-300 rounded-md" style="animation-delay: 0.6s;">Contact</a>
-                <button id="themeToggle" class="p-2 rounded-full bg-[var(--accent-color)] text-white hover:bg-[var(--accent-color-light)] transition duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--accent-color-light)]">
-                    <svg id="sunIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.325 5.924l-.707.707M6.343 6.343l-.707-.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <svg id="moonIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                </button>
-            </div>
-        </nav>
-    </header>
+<body>
 
-    <main class="pt-20">
+<nav><a href="#hero">SK — Dev</a><span><a href="#work">Work</a><a href="#record">Record</a><a href="#beyond">Beyond</a><a href="#contact">Contact</a></span></nav>
 
-        <!-- Hero Section -->
-        <section id="hero" class="text-white py-24 md:py-40 text-center rounded-b-xl shadow-none mx-4 md:mx-auto max-w-6xl overflow-hidden">
-            <div class="container mx-auto px-6 hero-content-interactive">
-                <img src="https://placehold.co/150x150/000000/FFFFFF?text=SK" alt="Your Photo" class="w-36 h-36 rounded-full mx-auto mb-8 border-4 border-[var(--accent-color)] shadow-lg transform hover:scale-105 transition duration-300 reveal-item reveal-up hero-image-glow" style="transition-delay: 0.1s;">
-                <h1 class="text-5xl md:text-7xl font-extrabold mb-5 leading-tight reveal-item reveal-up" style="transition-delay: 0.3s;">Hi, I'm Shashwat Kulshrestha</h1>
-                <p class="text-xl md:text-2xl mb-10 typing-text-wrapper">
-                    <span class="typing-text-container">
-                        <span class="typing-text-content">A passionate Software Developer building amazing web experiences.</span>
-                    </span>
-                </p>
-                <a href="#projects" class="bg-[var(--bg-primary)] text-[var(--accent-color)] hover:bg-[var(--bg-secondary)] font-semibold py-3.5 px-10 rounded-full shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 inline-block hero-button">View My Work</a>
-            </div>
-        </section>
+<header id="hero">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="wrap hero-in">
+    <div>
+      <span class="lbl">Full-stack developer · Noida, India</span>
+      <h1>Shashwat<br><span>Kulshrestha.</span></h1>
+      <p class="role">I build websites and apps, and I'm a little obsessed with it. Software Engineer by day, builder by night, traveller whenever the map allows. Clean, scalable, human-friendly products.</p>
+      <a class="cta" href="mailto:shashwat.kul@gmail.com">Contact ↗</a>
+    </div>
+    <div class="portrait"><b>SK</b><img src="https://avatars.githubusercontent.com/u/129109592?v=4&s=512" alt="Portrait of Shashwat Kulshrestha" onerror="this.remove()"></div>
+  </div>
+  <span class="scroll">Scroll to explore ↓</span>
+</header>
 
-        <!-- About Me Section -->
-        <section id="about" class="py-20 bg-[var(--bg-primary)] shadow-none rounded-xl mt-10 mx-4 md:mx-auto max-w-6xl px-8 reveal-item reveal-up">
-            <div class="container mx-auto">
-                <h2 class="text-4xl font-bold text-[var(--accent-color)] text-center mb-12 reveal-item reveal-up">About Me</h2>
-                <div class="flex flex-col md:flex-row items-center md:space-x-12">
-                    <div class="md:w-1/2 mb-8 md:mb-0 reveal-item reveal-left">
-                        <img src="https://placehold.co/400x300/080808/000080?text=About+Image" alt="About Me" class="rounded-xl shadow-lg w-full h-auto transform hover:scale-102 transition duration-300">
-                    </div>
-                    <div class="md:w-1/2 text-lg text-[var(--text-primary)] leading-relaxed reveal-item reveal-right">
-                        <p class="mb-5">Hi, I’m Shashwat Kulshrestha — a passionate tech enthusiast and full-stack developer in progress, currently pursuing final year B.Tech. I love transforming ideas into clean, functional digital experiences using tools like Java, React.js, Python. Whether it’s frontend design or backend logic, I enjoy building things that are thoughtful, scalable, and user-friendly.</p>
-                        <p class="mb-5">My curiosity for how technology shapes the world is what drives me. I constantly explore new tools and frameworks, enjoy debugging the tricky stuff, and take pride in learning something new with every project I take on. I believe technology is not just about code — it’s about solving real problems and making life simpler through innovation.</p>
-                        <p>Outside the world of tech, I’m a traveler at heart. I love exploring new places, meeting new people, and discovering different cultures. These experiences inspire my creativity and help me stay grounded. Whether I’m coding, learning, or wandering — I’m always seeking meaningful experiences and new challenges.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+<section id="work" class="wrap rv">
+  <span class="lbl">/ 01 — Selected work</span>
+  <h2>Things I've built</h2>
+  <div class="head lbl"><span>Index</span><span>Project</span><span class="c">Category</span><span></span></div>
+  <div id="list"></div>
+  <p class="lbl" style="margin-top:14px">Hover a row to preview. Click to open the repo or live site.</p>
+  <button class="arch-btn" id="abtn">* Open the archive (3 more builds)</button>
+  <div id="archive">
+    <span class="lbl">Archive — SK / 03</span>
+    <h3>Earlier builds</h3>
+    <p style="color:var(--mut)">Smaller projects from learning and hackathon days. Kept because each one taught something.</p>
+    <div class="ag">
+      <div><span class="lbl">AR-01 · speech</span><b>Spoken Language Translator</b>Translating spoken language between languages.</div>
+      <div><span class="lbl">AR-02 · media</span><b>Dynamic OTT Platform</b>A streaming-platform build exploring dynamic content.</div>
+      <div><span class="lbl">AR-03 · Flutter</span><b>Personalized Healthcare Dashboard</b>A cross-platform Flutter dashboard for personal health tracking.</div>
+    </div>
+  </div>
+</section>
+<div id="pv"></div>
 
-        <!-- Skills Section -->
-        <section id="skills" class="py-20 bg-[var(--bg-primary)] shadow-none rounded-xl mt-10 mx-4 md:mx-auto max-w-6xl px-8 reveal-item reveal-up">
-            <div class="container mx-auto">
-                <h2 class="text-4xl font-bold text-[var(--accent-color)] text-center mb-12 reveal-item reveal-up">My Skills</h2>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 grid-reveal-container">
-                    <!-- Skill Cards will be populated by JS -->
-                    <div class="skill-card reveal-item reveal-scale" data-skill="Java" data-projects="Enterprise Applications, Android Development, Backend Services" style="--delay: 0.4s;"><div class="skill-card-inner"><div class="skill-card-front"><i class="fab fa-java text-4xl text-[var(--accent-color)] mb-5"></i><h3 class="text-xl font-medium text-[var(--text-primary)]">Java</h3></div><div class="skill-card-back"><h4>Used in Projects:</h4><ul></ul></div></div></div>
-                    <div class="skill-card reveal-item reveal-scale" data-skill="HTML5" data-projects="Portfolio Website, E-commerce Platform, Blog System" style="--delay: 0s;"><div class="skill-card-inner"><div class="skill-card-front"><i class="fab fa-html5 text-4xl text-[var(--accent-color)] mb-5"></i><h3 class="text-xl font-medium text-[var(--text-primary)]">HTML5</h3></div><div class="skill-card-back"><h4>Used in Projects:</h4><ul></ul></div></div></div>
-                    <div class="skill-card reveal-item reveal-scale" data-skill="CSS3" data-projects="Portfolio Website, Responsive Dashboard, Custom UI Library" style="--delay: 0.1s;"><div class="skill-card-inner"><div class="skill-card-front"><i class="fab fa-css3-alt text-4xl text-[var(--accent-color)] mb-5"></i><h3 class="text-xl font-medium text-[var(--text-primary)]">CSS3</h3></div><div class="skill-card-back"><h4>Used in Projects:</h4><ul></ul></div></div></div>
-                    <div class="skill-card reveal-item reveal-scale" data-skill="JavaScript" data-projects="Interactive Game, API Integration, Form Validation" style="--delay: 0.2s;"><div class="skill-card-inner"><div class="skill-card-front"><i class="fab fa-js text-4xl text-[var(--accent-color)] mb-5"></i><h3 class="text-xl font-medium text-[var(--text-primary)]">JavaScript</h3></div><div class="skill-card-back"><h4>Used in Projects:</h4><ul></ul></div></div></div>
-                    <div class="skill-card reveal-item reveal-scale" data-skill="React.js" data-projects="Single Page Application, Component Library, State Management Demo" style="--delay: 0.3s;"><div class="skill-card-inner"><div class="skill-card-front"><i class="fab fa-react text-4xl text-[var(--accent-color)] mb-5"></i><h3 class="text-xl font-medium text-[var(--text-primary)]">React.js</h3></div><div class="skill-card-back"><h4>Used in Projects:</h4><ul></ul></div></div></div>
-                    <div class="skill-card reveal-item reveal-scale" data-skill="Python" data-projects="Data Analysis Script, Web Scraper, Machine Learning Model" style="--delay: 0.5s;"><div class="skill-card-inner"><div class="skill-card-front"><i class="fab fa-python text-4xl text-[var(--accent-color)] mb-5"></i><h3 class="text-xl font-medium text-[var(--text-primary)]">Python</h3></div><div class="skill-card-back"><h4>Used in Projects:</h4><ul></ul></div></div></div>
-                    <div class="skill-card reveal-item reveal-scale" data-skill="SQL" data-projects="Database Management, Data Warehousing, Reporting Tools" style="--delay: 0.6s;"><div class="skill-card-inner"><div class="skill-card-front"><i class="fas fa-database text-4xl text-[var(--accent-color)] mb-5"></i><h3 class="text-xl font-medium text-[var(--text-primary)]">SQL</h3></div><div class="skill-card-back"><h4>Used in Projects:</h4><ul></ul></div></div></div>
-                </div>
-            </div>
-        </section>
+<section id="record" class="wrap rv">
+  <span class="lbl">/ 02 — Dossier</span>
+  <h2>Record</h2>
+  <div class="rec">
+    <div>
+      <div class="big stat">2+<small> internships, then full-time</small></div>
+      <p style="margin-top:18px">Two internships, then a full-time engineering role, all shipping real software. BTech in Information Technology, GGSIPU New Delhi, class of 2026. Winner-mindset from Vedic Maths championships and college hackathons.</p>
+      <div class="arsenal" style="margin-top:30px">
+        <span class="lbl">Arsenal</span>
+        <div><b>Languages</b> — C, Java, Python, JavaScript</div>
+        <div><b>Frontend</b> — React.js, Tailwind CSS, Flutter</div>
+        <div><b>Backend</b> — Node.js, Express, Flask, FastAPI, JWT, RBAC</div>
+        <div><b>Data</b> — PostgreSQL, MySQL, MongoDB, SQLite</div>
+        <div><b>AI / ML</b> — TensorFlow, Scikit-learn, NumPy, Pandas</div>
+        <div><b>Cloud</b> — AWS (EC2, S3, SNS, SES), GitHub Actions CI/CD</div>
+      </div>
+    </div>
+    <div class="chron">
+      <span class="lbl">Chronology</span>
+      <div class="it"><span class="lbl">Posterity Consultancy · 06/2026 — Now</span><h4>Software Engineer</h4>Building web software and AI-driven features for a job platform serving grey-collar workers.</div>
+      <div class="it"><span class="lbl">Pay Panda · 06/2025 — 09/2025</span><h4>Software Engineer Intern</h4>Built a secure, role-based attendance portal with real-time tracking.</div>
+      <div class="it"><span class="lbl">QueueBusters · 05/2024 — 08/2024</span><h4>Software Engineer Intern</h4>Worked on a retail operations system that cut manual billing effort by 30%.</div>
+      <h3>Credentials</h3>
+      <div class="cards">
+        <div><span class="lbl">IBM SkillsBuild</span><b>AI Agent Architect</b></div>
+        <div><span class="lbl">Stanford Online</span><b>Machine Learning Specialization</b></div>
+        <div><span class="lbl">IBM SkillsBuild</span><b>Generative AI in Action</b></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <!-- Projects Section -->
-        <section id="projects" class="py-20 bg-[var(--bg-primary)] shadow-none rounded-xl mt-10 mx-4 md:mx-auto max-w-6xl px-8 reveal-item reveal-up">
-            <div class="container mx-auto">
-                <h2 class="text-4xl font-bold text-[var(--accent-color)] text-center mb-12 reveal-item reveal-up">My Projects</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 grid-reveal-container">
-                    <!-- Project Card 1 -->
-                    <div class="project-card reveal-item reveal-scale" style="--delay: 0s;"><img src="https://placehold.co/600x400/000080/FFFFFF?text=Project+1" alt="Project 1" class="project-image"><div class="project-image-overlay"><p>A web application built with React and Python</p><div class="flex space-x-4"><a href="https://attendancepaypanda.netlify.app/" class="bg-white text-[var(--accent-color)] font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300">View Live</a><a href="https://github.com/shashwatkul/Attendance-Portal" class="bg-gray-700 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-600 transition duration-300">GitHub</a></div></div><div class="project-content"><h3 class="text-2xl font-semibold text-[var(--text-primary)] mb-3">Company Attendance Portal</h3><p class="text-[var(--text-primary)] mb-5 text-base">A comprehensive attendance and HR portal built with React and Python. Employees track attendance and request leave, while HR manages users, approves requests, and generates reports for the company.</p></div></div>
-                    <!-- Project Card 2 -->
-                    <div class="project-card reveal-item reveal-scale" style="--delay: 0.1s;"><img src="https://placehold.co/600x400/000080/FFFFFF?text=Project+2" alt="Project 2" class="project-image"><div class="project-image-overlay"><p>A finance assistant built with React, Python and Tailwindcss</p><div class="flex space-x-4"><a href="#" class="bg-white text-[var(--accent-color)] font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300">View Live</a><a href="https://github.com/shashwatkul/Finance_Assistant" class="bg-gray-700 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-600 transition duration-300">GitHub</a></div></div><div class="project-content"><h3 class="text-2xl font-semibold text-[var(--text-primary)] mb-3">FinTrack: Your Personal AI-Powered Financial Assistant</h3><p class="text-[var(--text-primary)] mb-5 text-base">FinTrack is an intelligent personal finance app that uses AI insights to help you track transactions, manage budgets, and gain control over your spending. It provides a clear overview of your financial health, empowering you to make smarter financial decisions.</p></div></div>
-                    <!-- Project Card 3 -->
-                    <div class="project-card reveal-item reveal-scale" style="--delay: 0.2s;"><img src="https://placehold.co/600x400/000080/FFFFFF?text=Project+3" alt="Project 3" class="project-image"><div class="project-image-overlay"><p>A Billing Dashboard built with Java, AWT and MySQL.</p><div class="flex space-x-4"><a href="#" class="bg-white text-[var(--accent-color)] font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-300">View Live</a><a href="https://github.com/shashwatkul/Billing_Management_System" class="bg-gray-700 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-600 transition duration-300">GitHub</a></div></div><div class="project-content"><h3 class="text-2xl font-semibold text-[var(--text-primary)] mb-3">Billing Management System</h3><p class="text-[var(--text-primary)] mb-5 text-base">The Billing Management System is an application for retail stores that automates billing, manages customer and product data, and generates PDF invoices. It simplifies store operations with an intuitive interface for efficient tracking and billing.</p></div></div>
-                </div>
-            </div>
-        </section>
+<section id="beyond" class="wrap rv">
+  <span class="lbl">/ 03 — Beyond the code</span>
+  <h2>Builder. Traveller. Learner.</h2>
+  <div class="trip">
+    <div><span class="lbl">Core / 01</span><h3>Maker</h3>I love turning ideas into clean, working digital products, whether it's a website, a web app or a mobile app. Frontend polish or backend logic, I enjoy both halves.</div>
+    <div><span class="lbl">Core / 02</span><h3>Traveller</h3>New places, new people, different cultures. Travel keeps me creative and grounded, and it's where a lot of my best ideas show up.</div>
+    <div><span class="lbl">Core / 03</span><h3>Learner</h3>I debug the tricky stuff for fun, explore new frameworks constantly, and believe tech is about solving real problems and making life simpler.</div>
+  </div>
+</section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="py-20 bg-[var(--bg-primary)] shadow-none rounded-xl mt-10 mx-4 md:mx-auto max-w-6xl px-8 reveal-item reveal-up">
-            <div class="container mx-auto">
-                <h2 class="text-4xl font-bold text-[var(--accent-color)] text-center mb-12 reveal-item reveal-up">Get in Touch</h2>
-                <div class="max-w-xl mx-auto">
-                    <p class="text-center text-lg text-[var(--text-primary)] mb-10 reveal-item reveal-up">Have a question or want to work together? Feel free to reach out!</p>
-                    <form id="contactForm" class="space-y-6">
-                        <div class="reveal-item reveal-up" style="transition-delay: 0.1s;"><label for="name" class="block text-lg font-medium text-[var(--text-primary)] mb-2">Name</label><input type="text" id="name" name="name" class="w-full p-3 border border-transparent bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-lg focus:ring-2 focus:ring-[var(--accent-color)] focus:border-transparent transition duration-200" placeholder="Your Name" required></div>
-                        <div class="reveal-item reveal-up" style="transition-delay: 0.2s;"><label for="email" class="block text-lg font-medium text-[var(--text-primary)] mb-2">Email</label><input type="email" id="email" name="email" class="w-full p-3 border border-transparent bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-lg focus:ring-2 focus:ring-[var(--accent-color)] focus:border-transparent transition duration-200" placeholder="your.email@example.com" required></div>
-                        <div class="reveal-item reveal-up" style="transition-delay: 0.3s;"><label for="message" class="block text-lg font-medium text-[var(--text-primary)] mb-2">Message</label><textarea id="message" name="message" rows="7" class="w-full p-3 border border-transparent bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-lg focus:ring-2 focus:ring-[var(--accent-color)] focus:border-transparent transition duration-200" placeholder="Your message..." required></textarea></div>
-                        <div class="text-center reveal-item reveal-up" style="transition-delay: 0.4s;"><button type="submit" class="bg-[var(--accent-color)] text-white font-semibold py-3.5 px-10 rounded-full shadow-md hover:shadow-lg transition duration-300 transform hover:scale-105 contact-button">Send Message</button></div>
-                    </form>
-                </div>
-            </div>
-        </section>
-    </main>
+<div class="mq" aria-hidden="true"><div id="mq"></div></div>
 
-    <!-- Footer -->
-    <footer class="bg-[var(--bg-primary)] text-[var(--text-primary)] py-10 text-center rounded-t-xl shadow-none mx-4 md:mx-auto max-w-6xl">
-        <div class="container mx-auto px-6">
-            <p class="reveal-item reveal-up" style="transition-delay: 0.1s;">&copy; 2025 Shashwat. All rights reserved.</p>
-            <div class="flex justify-center space-x-6 mt-6 reveal-item reveal-up" style="transition-delay: 0.2s;">
-                <a href="https://www.linkedin.com/in/shashwat-kulshrestha-380640218/" target="_blank" class="text-gray-500 hover:text-[var(--accent-color)] transition duration-300 text-3xl"><i class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/shashwatkul" target="_blank" class="text-gray-500 hover:text-[var(--accent-color)] transition duration-300 text-3xl"><i class="fab fa-github"></i></a>
-                <a href="https://twitter.com/your_twitter_handle" target="_blank" class="text-gray-500 hover:text-[var(--accent-color)] transition duration-300 text-3xl"><i class="fab fa-twitter"></i></a>
-                <a href="https://www.instagram.com/shashwatkulshrestha/" target="_blank" class="text-gray-500 hover:text-[var(--accent-color)] transition duration-300 text-3xl"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-    </footer>
+<section id="contact" class="wrap rv">
+  <span class="lbl">/ 04 — Contact</span>
+  <h2>Let's build <span>something.</span></h2>
+  <p style="max-width:600px">Have a website, an app or a wild idea? I'm open to interesting projects and conversations. Write to me:</p>
+  <a class="mail" href="mailto:shashwat.kul@gmail.com">shashwat.kul@gmail.com</a>
+  <span class="lbl">Channels</span>
+  <div class="ch">
+    <a href="https://github.com/shashwatkul" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="https://www.linkedin.com/in/shashwat-kulshrestha-380640218/" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <a href="https://www.instagram.com/shashwatkulshrestha/" target="_blank" rel="noopener">Instagram ↗</a>
+  </div>
+  <footer><span>© 2026 Shashwat Kulshrestha</span><span>Noida, India · UTC+5:30</span><a href="#hero">Top ↑</a></footer>
+</section>
 
-    <!-- Message Box HTML -->
-    <div id="messageBox" class="message-box"><p id="messageText"></p><button onclick="document.getElementById('messageBox').classList.remove('show');">OK</button></div>
+<script>
+const $=s=>document.querySelector(s);
+const P=[
+ {t:'Attendance Portal',c:'Full-stack web app',s:'React · Flask · PostgreSQL · JWT · Tailwind',d:'Attendance and HR management for companies. Employees mark location-verified attendance (50 m from the office), view a calendar and request leave; HR manages staff, holidays, approvals and CSV reports.',u:'https://attendancepaypanda.netlify.app/'},
+ {t:'FinTrack',c:'AI finance assistant',s:'React · Python · Tailwind CSS',d:'Personal finance app that uses AI insights to track transactions, manage budgets and give a clear view of your financial health.',u:'https://github.com/shashwatkul/Finance_Assistant'},
+ {t:'Billing Management',c:'Desktop app',s:'Java · AWT · MySQL',d:'Retail billing system that automates billing, manages customer and product data, and generates PDF invoices.',u:'https://github.com/shashwatkul/Billing_Management_System'},
+ {t:'Stock Prediction Lab',c:'Machine learning',s:'Python · XGBoost · Walk-forward validation',d:'Nine-module prediction pipeline tested with walk-forward validation and benchmarked honestly against a naive baseline.'},
+ {t:'Algo Trading System',c:'Automation',s:'Python · Upstox API',d:'Automated trading framework for Indian markets: swing and intraday strategies, a vectorized backtester with realistic costs, risk management and a paper-trading mode.'},
+ {t:'ASD Detection',c:'ML research',s:'Python · TensorFlow · Scikit-learn',d:'ML pipeline on neuroimaging data comparing CNN, VGG16 and ResNet50 models for autism spectrum detection.'}
+];
+const list=$('#list'),pv=$('#pv');
+P.forEach((p,i)=>{
+ const a=document.createElement(p.u?'a':'div');if(p.u){a.href=p.u;a.target='_blank';a.rel='noopener'}
+ a.className='row';a.innerHTML=`<span class="n">0${i+1}</span><span class="t">${p.t}</span><span class="c lbl" style="color:inherit">${p.c}</span><span class="ar">${p.u?'↗':''}</span><span class="d">${p.s}</span>`;
+ a.addEventListener('mouseenter',()=>{pv.innerHTML=`<h3>${p.t}</h3><p>${p.d}</p><div class="s">${p.s}</div>`;pv.classList.add('on')});
+ a.addEventListener('mouseleave',()=>pv.classList.remove('on'));
+ a.addEventListener('mousemove',e=>{const x=Math.min(e.clientX+24,innerWidth-340),y=Math.min(e.clientY+20,innerHeight-pv.offsetHeight-16);pv.style.transform=`translate(${x}px,${y}px)`});
+ list.appendChild(a);
+});
 
-    <!-- Back to Top Button -->
-    <button id="backToTopBtn"><i class="fas fa-arrow-up"></i></button>
+$('#abtn').onclick=()=>{const a=$('#archive');a.classList.toggle('on');$('#abtn').textContent=a.classList.contains('on')?'✕ Close the archive':'* Open the archive (3 more builds)'};
+$('#mq').innerHTML=('SHASHWAT K.<span>✦</span>FULL-STACK<span>✦</span>WEBSITES &amp; APPS<span>✦</span>AI<span>✦</span>TRAVELLER<span>✦</span>').repeat(6);
 
-    <script>
-        // Function to show custom message box
-        function showMessageBox(message) {
-            const messageBox = document.getElementById('messageBox');
-            const messageText = document.getElementById('messageText');
-            messageText.textContent = message;
-            messageBox.classList.add('show');
-        }
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.08});
+document.querySelectorAll('.rv').forEach(e=>io.observe(e));
 
-        // Main script execution after DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // --- Hero Section Interactive Effects START ---
-            const heroSection = document.getElementById('hero');
-            const heroContent = document.querySelector('.hero-content-interactive');
+/* ---------- Three.js 1: hero model — low-poly globe, orbiting laptop, paper plane ---------- */
+(function(){
+ const cv=$('#gl');if(!window.THREE||!cv)return;
+ let R;try{R=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true})}catch(e){return}
+ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ R.setPixelRatio(Math.min(devicePixelRatio,2));
+ const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(40,1,.1,50);cam.position.z=9.5;
+ sc.add(new THREE.AmbientLight(0xffffff,.65));
+ const sun=new THREE.DirectionalLight(0xffffff,.85);sun.position.set(3,4,5);sc.add(sun);
+ const INK=0x141414,ACC=0xe14d2a,root=new THREE.Group();sc.add(root);
 
-            if (heroSection && heroContent) {
-                heroSection.addEventListener('mousemove', (e) => {
-                    const { clientX, clientY } = e;
-                    const { offsetWidth, offsetHeight } = heroSection;
+ /* globe: flat-shaded faces coloured land / sea from a cheap noise function */
+ const gg=new THREE.IcosahedronGeometry(1.6,2);gg.computeVertexNormals();
+ const pa=gg.attributes.position,col=new Float32Array(pa.count*3),land=new THREE.Color(0x1d1d1b),sea=new THREE.Color(0xd8d4c8);
+ for(let i=0;i<pa.count;i+=3){
+  const x=(pa.getX(i)+pa.getX(i+1)+pa.getX(i+2))/4.8,y=(pa.getY(i)+pa.getY(i+1)+pa.getY(i+2))/4.8,z=(pa.getZ(i)+pa.getZ(i+1)+pa.getZ(i+2))/4.8;
+  const n=Math.sin(x*3.1+1.3)*Math.cos(y*2.7)+Math.sin(z*3.7+x*2)*.6+Math.sin((x+y)*5)*.25,c=n>.3?land:sea;
+  for(let k=0;k<3;k++){col[(i+k)*3]=c.r;col[(i+k)*3+1]=c.g;col[(i+k)*3+2]=c.b}
+ }
+ gg.setAttribute('color',new THREE.BufferAttribute(col,3));
+ const globe=new THREE.Group();root.add(globe);
+ globe.add(new THREE.Mesh(gg,new THREE.MeshLambertMaterial({vertexColors:true})));
+ globe.add(new THREE.Mesh(new THREE.IcosahedronGeometry(1.63,2),new THREE.MeshBasicMaterial({color:INK,wireframe:true,transparent:true,opacity:.12})));
+ /* travel pins (lat, lon): Delhi, Tokyo, Paris, Sydney, New York */
+ [[28.6,77.2],[35.7,139.7],[48.9,2.3],[-33.9,151.2],[40.7,-74]].forEach(([la,lo])=>{
+  la*=Math.PI/180;lo*=Math.PI/180;
+  const d=new THREE.Vector3(Math.cos(la)*Math.cos(lo),Math.sin(la),-Math.cos(la)*Math.sin(lo));
+  const pin=new THREE.Mesh(new THREE.ConeGeometry(.055,.3,8),new THREE.MeshBasicMaterial({color:ACC}));
+  pin.position.copy(d).multiplyScalar(1.73);pin.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d);globe.add(pin);
+ });
 
-                    // Calculate position from center of the section
-                    const x = (clientX - offsetWidth / 2) / 25; // Divide to reduce the effect's intensity
-                    const y = (clientY - offsetHeight / 2) / 25;
+ /* laptop with a little "code" screen */
+ const cc=document.createElement('canvas');cc.width=256;cc.height=160;const x=cc.getContext('2d');
+ x.fillStyle='#141414';x.fillRect(0,0,256,160);
+ ['#e14d2a','#e5e3dc','#8d8a80'].forEach((c,j)=>{for(let i=0;i<8;i++){x.fillStyle=c;if((i+j)%3===0)x.fillRect(16+(i%3)*14,16+i*15,30+((i*37+j*19)%130),6)}});
+ x.fillStyle='#e14d2a';x.font='bold 24px monospace';x.fillText('</>',186,142);
+ const lap=new THREE.Group(),alu=new THREE.MeshLambertMaterial({color:0xbdb9ad}),dk=new THREE.MeshLambertMaterial({color:0x2a2a28});
+ const base=new THREE.Mesh(new THREE.BoxGeometry(1.1,.06,.75),alu);
+ const lid=new THREE.Group();lid.position.set(0,.03,-.375);lid.rotation.x=-.25;
+ const back=new THREE.Mesh(new THREE.BoxGeometry(1.1,.72,.04),dk);back.position.y=.36;
+ const scr=new THREE.Mesh(new THREE.PlaneGeometry(1.0,.62),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cc)}));scr.position.set(0,.36,.022);
+ lid.add(back,scr);lap.add(base,lid);lap.scale.setScalar(.85);
+ const lapO=new THREE.Group();lapO.rotation.set(.45,0,-.15);root.add(lapO);
+ const lapH=new THREE.Group();lapH.add(lap);lapO.add(lapH);
 
-                    // Update CSS variables
-                    heroContent.style.setProperty('--x', -x);
-                    heroContent.style.setProperty('--y', -y);
-                });
-            }
-            // --- Hero Section Interactive Effects END ---
+ /* paper plane on a dashed flight path */
+ const ringG=new THREE.Group();ringG.rotation.set(.9,0,.35);root.add(ringG);
+ const pts=[];for(let i=0;i<=120;i++){const b=i/120*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(b)*2.45,0,Math.sin(b)*2.45))}
+ const ring=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineDashedMaterial({color:INK,dashSize:.1,gapSize:.1}));ring.computeLineDistances();ringG.add(ring);
+ const pg=new THREE.BufferGeometry();
+ pg.setAttribute('position',new THREE.Float32BufferAttribute([0,0,.5,-.3,.05,-.3,.3,.05,-.3,0,-.12,-.3],3));pg.setIndex([0,1,2,0,3,1,0,2,3]);pg.computeVertexNormals();
+ const pm=new THREE.Mesh(pg,new THREE.MeshLambertMaterial({color:0xffffff,side:THREE.DoubleSide}));
+ pm.add(new THREE.LineSegments(new THREE.EdgesGeometry(pg),new THREE.LineBasicMaterial({color:INK})));pm.scale.setScalar(1.3);pm.rotation.z=.3;
+ const pH=new THREE.Group();pH.add(pm);ringG.add(pH);
 
-            // Existing variable declarations
-            const revealElements = document.querySelectorAll('.reveal-item');
-            const skillCards = document.querySelectorAll('.skill-card');
-            const typingTextContainer = document.querySelector('.typing-text-container');
-            const typingTextContent = document.querySelector('.typing-text-content');
-            const contactForm = document.getElementById('contactForm');
-            const themeToggle = document.getElementById('themeToggle');
-            const sunIcon = document.getElementById('sunIcon');
-            const moonIcon = document.getElementById('moonIcon');
-            const backToTopBtn = document.getElementById('backToTopBtn');
-
-            // Theme toggle logic
-            const currentTheme = localStorage.getItem('theme') || 'dark-mode';
-            document.body.classList.add(currentTheme);
-            if (currentTheme === 'light-mode') {
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
-            } else {
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'block';
-            }
-
-            themeToggle.addEventListener('click', () => {
-                const isDarkMode = document.body.classList.contains('dark-mode');
-                if (isDarkMode) {
-                    document.body.classList.remove('dark-mode');
-                    document.body.classList.add('light-mode');
-                    localStorage.setItem('theme', 'light-mode');
-                    sunIcon.style.display = 'block';
-                    moonIcon.style.display = 'none';
-                } else {
-                    document.body.classList.remove('light-mode');
-                    document.body.classList.add('dark-mode');
-                    localStorage.setItem('theme', 'dark-mode');
-                    sunIcon.style.display = 'none';
-                    moonIcon.style.display = 'block';
-                }
-            });
-
-            // Intersection Observer for scroll-reveal animations
-            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        if (!entry.target.closest('.grid-reveal-container')) {
-                            observer.unobserve(entry.target);
-                        }
-                    }
-                });
-            }, observerOptions);
-            revealElements.forEach(el => observer.observe(el));
-
-            // Staggered animations for grid items
-            document.querySelectorAll('.grid-reveal-container').forEach(container => {
-                container.querySelectorAll('.reveal-item').forEach((item, index) => {
-                    item.style.setProperty('--delay', `${index * 0.1}s`);
-                });
-            });
-
-            // Skill Card Flip Logic
-            skillCards.forEach(card => {
-                const projectsString = card.dataset.projects;
-                const projects = projectsString ? projectsString.split(',').map(p => p.trim()) : [];
-                const backUl = card.querySelector('.skill-card-back ul');
-                if (backUl) {
-                    if (projects.length > 0) {
-                        projects.forEach(project => {
-                            const li = document.createElement('li');
-                            li.textContent = project;
-                            backUl.appendChild(li);
-                        });
-                    } else {
-                        const li = document.createElement('li');
-                        li.textContent = `No specific projects listed.`;
-                        backUl.appendChild(li);
-                    }
-                }
-            });
-
-            // Typing Text Animation Logic
-            if (typingTextContainer && typingTextContent) {
-                const text = typingTextContent.textContent;
-                const fullWidth = typingTextContent.scrollWidth;
-                typingTextContainer.style.setProperty('--typing-width', `${fullWidth}px`);
-                typingTextContainer.style.animation = `typing 3.5s steps(${text.length}, end) forwards, blink-caret .75s step-end infinite`;
-                typingTextContainer.addEventListener('animationend', (e) => {
-                    if (e.animationName === 'typing') {
-                        typingTextContainer.style.width = 'auto';
-                        typingTextContainer.style.borderRight = 'none';
-                        typingTextContainer.style.animation = 'none';
-                    }
-                });
-            }
-
-            // Contact Form Submission with Formspree
-            if (contactForm) {
-                contactForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    
-                    // IMPORTANT: Replace with your own Formspree endpoint
-                    const formAction = "https://formspree.io/f/movldebp";
-                    const formData = new FormData(contactForm);
-                    
-                    try {
-                        const response = await fetch(formAction, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'Accept': 'application/json'
-                            }
-                        });
-
-                        if (response.ok) {
-                            showMessageBox('Message sent successfully!');
-                            contactForm.reset();
-                        } else {
-                            const data = await response.json();
-                            if (Object.hasOwn(data, 'errors')) {
-                                const errorMsg = data["errors"].map(error => error["message"]).join(", ");
-                                showMessageBox(`Error: ${errorMsg}`);
-                            } else {
-                                showMessageBox('Oops! There was a problem submitting your form.');
-                            }
-                        }
-                    } catch (error) {
-                        showMessageBox('Oops! There was a problem submitting your form.');
-                    }
-                });
-            }
-
-            // Back to Top Button Logic
-            const backToTopButton = document.getElementById('backToTopBtn');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 300) {
-                    backToTopButton.classList.add('show');
-                } else {
-                    backToTopButton.classList.remove('show');
-                }
-            });
-            backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-        });
-    </script>
+ function size(){const w=cv.clientWidth,h=cv.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+ addEventListener('resize',size);size();
+ const m={x:0,y:0};addEventListener('mousemove',e=>{m.x=e.clientX/innerWidth-.5;m.y=e.clientY/innerHeight-.5});
+ const clk=new THREE.Clock();
+ (function f(){
+  const t=reduce?0:clk.getElapsedTime(),a=t*.45,b=t*.7;
+  globe.rotation.y=t*.25;
+  root.rotation.y+=(m.x*.7-root.rotation.y)*.05;root.rotation.x+=(m.y*.5-root.rotation.x)*.05;
+  root.position.y=scrollY*.004;
+  lapH.position.set(Math.cos(a)*3,Math.sin(t*1.6)*.1,Math.sin(a)*3);lapH.rotation.y=Math.PI/2-a;
+  pH.position.set(Math.cos(b)*2.45,0,Math.sin(b)*2.45);pH.rotation.y=-b;
+  R.render(sc,cam);
+  if(!reduce)requestAnimationFrame(f);
+ })();
+})();
+</script>
 </body>
 </html>
